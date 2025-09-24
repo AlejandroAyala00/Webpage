@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sunrise">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Preferences</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Spacing scale (consistent across components) */
+        :root {
+            --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+            --space-5: 1.5rem; --space-6: 2rem; --space-7: 2.5rem;
+
+            --font-stack: 'Inter', system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+            --bs-primary:#ff4896; --bs-primary-rgb:255,72,150;
+            --brand-bg:#fff7ec; --brand-accent:#ffe3f2; --brand-text:#b32767;
+            --card-border:#ffc9de; --card-bg:#ffffff;
+            --body-gradient:radial-gradient(circle at 30% 25%, #ffe3f2 0%, #fff1c9 55%, #fffdf6 100%);
+            --list-border:#ffd7e8; --list-border-top:#ffe6ef;
+            --pill-bg:#ffd9ec; --pref-hover:#ffeaf5; --pref-checked-bg:#fff4da;
+            --text-secondary:#a25460; --btn-outline-border:#ffb2cf; --btn-outline-color:#b5496f;
+            --btn-outline-hover-bg:#ffe0ef; --btn-outline-hover-border:#ff90bc;
+            --header-grad:linear-gradient(135deg,#ff6fb1 0%,#ff9f5a 55%,#ffc94d 100%);
+            --header-border:#ff9f5a; --gradient-bar:linear-gradient(90deg,#ff4fa3,#ffce47,#ff4fa3);
+        }
+        [data-theme="dark"] {
+            --bs-primary:#4da6ff; --bs-primary-rgb:77,166,255;
+            --brand-bg:#0f1f2e; --brand-accent:#133549; --brand-text:#9cccff;
+            --card-border:#1f3a52; --card-bg:#142635;
+            --body-gradient:radial-gradient(circle at 25% 20%, #0d1a25 0%, #102333 60%, #142635 100%);
+            --list-border:#244357; --list-border-top:#1d3748;
+            --pill-bg:#1c3d55; --pref-hover:#17394c; --pref-checked-bg:#1c3142;
+            --text-secondary:#adc2d4; --btn-outline-border:#345065; --btn-outline-color:#afc9dd;
+            --btn-outline-hover-bg:#234459; --btn-outline-hover-border:#4d90b8;
+            --header-grad:linear-gradient(135deg,#0a3d66 0%,#0a4e82 55%,#0b5fa3 100%);
+            --header-border:#0a4e82; --gradient-bar:linear-gradient(90deg,#0a4e82,#3395d6,#0a4e82);
+        }
+
+        /* High contrast override */
+        :root[data-contrast="high"] {
+            --body-gradient:#ffffff;
+            --card-bg:#ffffff;
+            --brand-bg:#ffffff;
+            --brand-accent:#f2f2f2;
+            --card-border:#000;
+            --list-border:#000;
+            --list-border-top:#000;
+            --pill-bg:#000;
+            --brand-text:#000;
+            --text-secondary:#222;
+            --bs-primary:#000;
+            --bs-primary-rgb:0,0,0;
+            --pref-hover:#e6e6e6;
+            --pref-checked-bg:#f4f4f4;
+            --header-grad:linear-gradient(#000,#000);
+            --header-border:#000;
+            --gradient-bar:linear-gradient(90deg,#000,#444,#000);
+        }
+        :root[data-theme="dark"][data-contrast="high"] {
+            --body-gradient:#000;
+            --card-bg:#000;
+            --brand-bg:#000;
+            --brand-accent:#111;
+            --card-border:#fff;
+            --list-border:#fff;
+            --list-border-top:#fff;
+            --pill-bg:#fff;
+            --brand-text:#fff;
+            --text-secondary:#e0e0e0;
+            --bs-primary:#ffffff;
+            --bs-primary-rgb:255,255,255;
+            --pref-hover:#161616;
+            --pref-checked-bg:#121212;
+            --header-grad:linear-gradient(#000,#000);
+            --header-border:#fff;
+            --gradient-bar:linear-gradient(90deg,#fff,#888,#fff);
+        }
+        [data-contrast="high"] .gradient-bar { animation:none; }
+        [data-contrast="high"] .pref-list label:has(input:focus-visible) { outline:3px solid #ffbf00; outline-offset:2px; }
+        [data-theme="dark"][data-contrast="high"] .pref-list label:has(input:focus-visible) { outline:3px solid #ffbf00; }
+
+        /* Stack utilities (vertical rhythm) */
+        .stack-md > * + * { margin-top: var(--space-4); }
+
+        /* Global typography */
+        html { font-size:16px; }
+        body {
+            background: var(--body-gradient);
+            min-height:100vh;
+            font-family: var(--font-stack);
+            padding: var(--space-7) 0;
+        }
+        h1 { margin:0; font-weight:600; }
+
+        /* Card layout */
+        .card {
+            border:1px solid var(--card-border);
+            background:var(--card-bg);
+            border-radius:.85rem;
+            overflow:hidden;
+        }
+        .card-header {
+            background:var(--header-grad);
+            color:#fff;
+            border-bottom:1px solid var(--header-border);
+            padding:var(--space-4) var(--space-5);
+        }
+        .card-body {
+            padding:var(--space-5);
+        }
+        .card-footer {
+            background:var(--brand-bg);
+            border-top:1px solid var(--card-border);
+            padding:var(--space-3) var(--space-5);
+            color:var(--text-secondary);
+        }
+
+        .gradient-bar {
+            height:4px; background:var(--gradient-bar);
+            background-size:200% 100%; animation:flow 6s linear infinite;
+        }
+        @keyframes flow { 0%{background-position:0 0;} 100%{background-position:200% 0;} }
+
+        /* Preference list */
+        .pref-list {
+            border-radius:.65rem;
+            overflow:hidden;
+        }
+        .pref-list .list-group-item {
+            border-color:var(--list-border);
+            background:transparent;
+            padding:var(--space-3) var(--space-4);
+            display:flex;
+            gap:var(--space-3);
+        }
+        .pref-list .list-group-item + .list-group-item {
+            border-top-color:var(--list-border-top);
+        }
+        .pref-list label {
+            cursor:pointer;
+            border-left:4px solid transparent;
+            transition:.15s;
+            font-weight:500;
+        }
+        .pref-list label:hover { background:var(--pref-hover); }
+        .pref-list label:has(input:focus-visible) { outline:2px solid #ff89c3; outline-offset:2px; }
+        [data-theme="dark"] .pref-list label:has(input:focus-visible) { outline:2px solid #4da6ff; }
+        .pref-list label:has(input:checked) { border-left-color:var(--bs-primary); background:var(--pref-checked-bg); }
+
+        /* Inputs */
+        .form-check-input {
+            width:1.05rem;
+            height:1.05rem;
+            margin-top:.25rem;
+        }
+        .form-check-input:focus {
+            box-shadow:0 0 0 .2rem rgba(var(--bs-primary-rgb),.35);
+        }
+
+        /* Buttons */
+        .btn { font-weight:500; letter-spacing:.3px; }
+        .btn-primary {
+            background:var(--bs-primary);
+            border-color:var(--bs-primary);
+        }
+        .btn-primary:hover { filter:brightness(.9); }
+        .btn-outline-secondary.btn-sm {
+            border-color:var(--btn-outline-border);
+            color:var(--btn-outline-color);
+        }
+        .btn-outline-secondary.btn-sm:hover {
+            background:var(--btn-outline-hover-bg);
+            color:var(--bs-primary);
+            border-color:var(--btn-outline-hover-border);
+        }
+        #themeToggleSunDark { min-width:140px; }
+        #themeToggleSunDark.dark-mode-btn {
+            background:#133549; color:#cce9ff; border:1px solid #1d5471;
+        }
+        #themeToggleSunDark.sunrise-mode-btn {
+            background:#ff88bf; color:#5a2a00; border:1px solid #ffb6d7;
+        }
+        #contrastToggle { min-width:150px; }
+        #contrastToggle.hc-active { background:#000; color:#fff; border-color:#000; }
+        [data-theme="dark"][data-contrast="high"] #contrastToggle.hc-active { background:#fff; color:#000; border-color:#fff; }
+
+        /* Status & helper text */
+        .status-pill {
+            font-size:.7rem;
+            padding:.35rem .65rem;
+            border-radius:50rem;
+            background:var(--pill-bg);
+            color:var(--brand-text)!important;
+            font-weight:600;
+            letter-spacing:.5px;
+        }
+        .save-disabled-msg { display:none; font-size:.7rem; font-weight:500; }
+        button[disabled] + .save-disabled-msg { display:block; }
+
+        /* Misc */
+        .inline-alert-placeholder { min-height:2.25rem; }
+
+        /* Content visibility optimization (helps performance when page grows).
+           Adjust contain-intrinsic-size to approximate off‑screen height. */
+        .cv-auto {
+            content-visibility: auto;
+            contain-intrinsic-size: 900px 0;
+        }
+
+        /* Optionally: only enable when user not reduced-motion (defensive) */
+        @media (prefers-reduced-motion: reduce) {
+            .cv-auto { content-visibility: visible; contain-intrinsic-size: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-xl-6">
+                <!-- ADDED wrapper with content-visibility -->
+                <section class="cv-auto">
+                    <div class="card shadow-sm">
+                        <div class="gradient-bar"></div>
+                        <div class="card-header d-flex align-items-center gap-2 flex-wrap">
+                            <h1 class="h4 flex-grow-1 mb-0">Email Preferences</h1>
+                            <button type="button" id="themeToggleSunDark" class="btn btn-sm sunrise-mode-btn" aria-pressed="false" aria-label="Toggle dark mode">Dark Mode</button>
+                            <button type="button" id="contrastToggle" class="btn btn-sm btn-outline-light" aria-pressed="false" aria-label="Toggle high contrast">High Contrast</button>
+                            <span id="selectionStatus" class="status-pill" aria-live="polite">Loading...</span>
+                        </div>
+                        <div class="card-body stack-md">
+                            <!-- Inline alert container -->
+                            <div class="inline-alert-placeholder">
+                                <div id="saveAlert" class="alert alert-success alert-dismissible fade d-none mb-0 py-2 px-3" role="alert">
+                                    <strong>Preferences updated.</strong> Your changes were saved.
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+
+                            <p class="intro-text mb-0">Turn specific email communications on or off at any time.</p>
+                            <p class="text-secondary small mb-0" id="whyEmails">These updates help you stay compliant, avoid missed deadlines, and spot potential savings opportunities.</p>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" id="btnSelectAll" class="btn btn-outline-secondary btn-sm">Select All</button>
+                                <button type="button" id="btnDeselectAll" class="btn btn-outline-secondary btn-sm">Deselect All</button>
+                            </div>
+
+                            <form id="emailPrefs" action="https://www.w3schools.com/action_page.php" method="post" novalidate class="stack-md">
+                                <fieldset class="border-0 p-0 m-0">
+                                    <legend class="visually-hidden">Select the types of email communications you want to receive</legend>
+                                    <div class="list-group pref-list">
+                                        <label class="list-group-item">
+                                            <input class="form-check-input" type="checkbox" id="criticalAlerts" name="criticalAlerts" value="1" checked>
+                                            <span>Critical alerts and notifications about your tax return</span>
+                                        </label>
+                                        <label class="list-group-item">
+                                            <input class="form-check-input" type="checkbox" id="specialOffers" name="specialOffers" value="1">
+                                            <span>Information about special offers for tax services</span>
+                                        </label>
+                                        <label class="list-group-item">
+                                            <input class="form-check-input" type="checkbox" id="irsNotifications" name="irsNotifications" value="1" checked>
+                                            <span>Receive notifications of IRS changes and deadlines</span>
+                                        </label>
+                                        <label class="list-group-item">
+                                            <input class="form-check-input" type="checkbox" id="monthlyNewsletter" name="monthlyNewsletter" value="1">
+                                            <span>Learn from monthly tax newsletter with tax news and tips</span>
+                                        </label>
+                                    </div>
+                                </fieldset>
+                                <div class="d-grid gap-2">
+                                    <button id="saveBtn" type="submit" class="btn btn-primary" disabled>Save Preferences</button>
+                                    <div class="text-muted text-center save-disabled-msg">No changes to save</div>
+                                    <small class="text-muted text-center">Only checked items are sent.</small>
+                                    <small id="lastSavedWrap" class="text-muted text-center d-block" aria-live="polite">
+                                        Last saved: <time id="lastSaved">—</time>
+                                    </small>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer small">
+                            You can update these settings anytime.
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+            const form = document.getElementById('emailPrefs');
+            const status = document.getElementById('selectionStatus');
+            const selectAllBtn = document.getElementById('btnSelectAll');
+            const deselectAllBtn = document.getElementById('btnDeselectAll');
+            const themeBtn = document.getElementById('themeToggleSunDark');
+            const contrastBtn = document.getElementById('contrastToggle');
+            const saveBtn = document.getElementById('saveBtn');
+            const alertEl = document.getElementById('saveAlert');
+            const lastSavedEl = document.getElementById('lastSaved');
+            const root = document.documentElement;
+
+            const THEME_KEY = 'emailpref-theme';
+            const THEMES = ['sunrise','dark'];
+            const CONTRAST_KEY = 'emailpref-contrast';
+
+            const boxes = () => [...form.querySelectorAll('input[type="checkbox"]')];
+            let initialSignature = signature();
+
+            function signature() { return boxes().map(cb => cb.id + ':' + (cb.checked ? 1 : 0)).join('|'); }
+            function updateStatus() {
+                const total = boxes().length;
+                const checked = boxes().filter(c => c.checked).length;
+                status.textContent = checked === total ? 'All selected' :
+                                     checked === 0 ? 'None selected' :
+                                     checked + ' of ' + total + ' selected';
+            }
+            function updateSaveState() { saveBtn.disabled = signature() === initialSignature; }
+            function setAll(state) { boxes().forEach(cb => cb.checked = state); updateStatus(); updateSaveState(); }
+            function applyTheme(theme) {
+                root.setAttribute('data-theme', theme);
+                localStorage.setItem(THEME_KEY, theme);
+                const dark = theme === 'dark';
+                themeBtn.textContent = dark ? 'Sunrise Mode' : 'Dark Mode';
+                themeBtn.setAttribute('aria-pressed', dark);
+                themeBtn.classList.toggle('dark-mode-btn', dark);
+                themeBtn.classList.toggle('sunrise-mode-btn', !dark);
+            }
+            function applyContrast(isHigh) {
+                root.setAttribute('data-contrast', isHigh ? 'high' : 'normal');
+                localStorage.setItem(CONTRAST_KEY, isHigh ? 'high' : 'normal');
+                contrastBtn.textContent = isHigh ? 'Standard Contrast' : 'High Contrast';
+                contrastBtn.setAttribute('aria-pressed', isHigh);
+                contrastBtn.classList.toggle('hc-active', isHigh);
+            }
+            function initTheme() {
+                const saved = localStorage.getItem(THEME_KEY);
+                applyTheme(THEMES.includes(saved) ? saved : 'sunrise');
+            }
+            function initContrast() {
+                const saved = localStorage.getItem(CONTRAST_KEY) === 'high';
+                applyContrast(saved);
+            }
+
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+                setTimeout(() => {
+                    initialSignature = signature();
+                    updateSaveState();
+                    saveBtn.textContent = 'Save Preferences';
+                    alertEl.classList.remove('d-none');
+                    alertEl.classList.add('show');
+                    const now = new Date();
+                    if (lastSavedEl) {
+                        lastSavedEl.textContent = now.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+                        lastSavedEl.setAttribute('datetime', now.toISOString());
+                    }
+                }, 500);
+            });
+
+            selectAllBtn.addEventListener('click', () => setAll(true));
+            deselectAllBtn.addEventListener('click', () => setAll(false));
+            boxes().forEach(cb => cb.addEventListener('change', () => { updateStatus(); updateSaveState(); }));
+            themeBtn.addEventListener('click', () => {
+                const current = root.getAttribute('data-theme') || 'sunrise';
+                applyTheme(current === 'sunrise' ? 'dark' : 'sunrise');
+            });
+            contrastBtn.addEventListener('click', () => {
+                const isHigh = root.getAttribute('data-contrast') !== 'high';
+                applyContrast(isHigh);
+            });
+
+            initTheme();
+            initContrast();
+            updateStatus();
+            updateSaveState();
+        })();
+    </script>
+</body>
+</html>
